@@ -64,6 +64,14 @@ public:
    */
   void UpdateEKF(const Eigen::VectorXd &z);
 
+private:
+
+  void Update_Generic(const Eigen::VectorXd &y);
+
+  Eigen::VectorXd H_Radar(const Eigen::VectorXd &x_prime);
+
+
+
 };
 
 #endif /* KALMAN_FILTER_H_ */
