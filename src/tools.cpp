@@ -60,7 +60,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float vy = x_state(3);
 
   // pre-compute a set of terms to avoid repeated calculations
-  float c1 = px*px + py*py;
+  float c1 = (px*px) + (py*py);
   float c2 = std::sqrt(c1);
   float c3 = (c1*c2);
 

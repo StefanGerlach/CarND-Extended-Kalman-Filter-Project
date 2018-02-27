@@ -165,9 +165,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // Laser updates
     // Set the H (measurement transition function) matrix
     // Set the R (measurement covariance) matrix
-    //this->ekf_.H_ = this->H_laser_;
-    //this->ekf_.R_ = this->R_laser_;
-    //this->ekf_.Update(measurement_pack.raw_measurements_);
+    this->ekf_.H_ = this->H_laser_;
+    this->ekf_.R_ = this->R_laser_;
+    this->ekf_.Update(measurement_pack.raw_measurements_);
   }
 
   // print the output

@@ -1,5 +1,7 @@
 #include "kalman_filter.h"
 #include <exception>
+#include <iostream>
+#include <cmath>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -43,7 +45,7 @@ void KalmanFilter::Update_Generic(const Eigen::VectorXd &y) {
     MatrixXd K = P_ * H_.transpose() * S.inverse();         // Kalman Gain
     MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());  // Identity matrix
 
-    x_ = x_ + K * y;
+    x_ = x_ + (K * y);
     P_ = (I - K * H_) * P_;
 }
 
@@ -61,7 +63,20 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
     * update the state by using Extended Kalman Filter equations
   */
+
   VectorXd y = z - this->H_Radar(x_);
+
+  // make sure the angle is between -PI and PI
+  double &phi = y(1);
+  double offset = (M_PI * 2.0);
+
+  // check if we are larger or smaller
+  while(phi < -M_PI) {
+    phi += offset;
+  }
+  while(phi > M_PI) {
+    phi -= offset;
+  }
 
   this->Update_Generic(y);
 }
@@ -82,10 +97,10 @@ Eigen::VectorXd KalmanFilter::H_Radar(const Eigen::VectorXd &x_prime) {
   const double &vy = x_prime(3);
 
   h_x_prime(0) = std::sqrt((px*px)+(py*py));
-  h_x_prime(1) = std::atan(py/px);
+  h_x_prime(1) = atan2(py, px);
 
   // set the rho_dot only if no division by zero occurs!
-  if(h_x_prime(0) > 1e-4) {
+  if((h_x_prime(0) > 1e-4) || (h_x_prime(0) < -1e-4)) {
     h_x_prime(2) = ((px*vx) + (py*vy)) / h_x_prime(0);
   }
 
